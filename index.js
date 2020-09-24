@@ -103,8 +103,9 @@ function mainfunction(){
            break;
            case "next":
                songsindex=(songsindex+1)%myallsongs.length;
-               musicstop();
+              
                addallsongs(myallsongs[songsindex])
+               musicplay();
                break;
                case "prev":
                 songsindex=(songsindex-1+myallsongs.length)%myallsongs.length;
@@ -113,5 +114,39 @@ function mainfunction(){
                 break;
  }
  }
+ let progress=document.getElementById('insideprogress')
+ let startingtime=document.querySelector('.starting-time');
+ let finishingtime=document.querySelector('.finishing-time');
+song.addEventListener('timeupdate',(e)=>{
+const{currentTime,duration}=e.srcElement;
+let progresstime=(currentTime/duration)*100
+progress.style.width=`${progresstime}%`;
+let min_Time=Math.floor(duration/60);
+let sec_Time=Math.floor(duration%60);
+if(sec_Time<10){
+    sec_Time=`0${sec_Time}`
+}
+if(duration){
+    finishingtime.textContent=`${min_Time}:${sec_Time}`
+}
+let current_tim=Math.floor(currentTime/60);
+let current_sec=Math.floor(currentTime%60);
+if(current_sec<10){
+    current_sec=`0${current_sec}`
+}
+startingtime.textContent=`${current_tim}:${current_sec}`
 
+})
+song.addEventListener('ended',NextSong)
+song.addEventListener('ended',musicplay)
+function NextSong(){
+    songsindex=(songsindex+1)%myallsongs.length;
+    addallsongs(myallsongs[songsindex])
+}
 
+let outsideprogress=document.querySelector('.progress');
+outsideprogress.addEventListener('click',(e)=>{
+const {duration}=song;
+let move_progressbar=(e.offsetX/e.srcElement.clientWidth)*duration
+song.currentTime=move_progressbar;
+})
